@@ -19,4 +19,8 @@ router.post('/notes', (req, res) => {
   }
 });
 
+router.delete('/notes', (req, res) => {
+
+});
+
 module.exports = router;
