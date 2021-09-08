@@ -1,26 +1,30 @@
 const router = require('express').Router();
 
-const {createNewNote, validateNote} = require('../../lib/notes');
-const db = require('../../db/db');
+const {getNotes, createNewNote, validateNote, deleteNote} = require('../../lib/notes');
 
 router.get('/notes', (req, res) => {
-  res.json(db);
+  res.json(getNotes());
 });
 
 router.post('/notes', (req, res) => {
-  const newNote = req.body;
-  newNote.id = (db.length + 1).toString();
+  let newNote = req.body;
 
   if (!validateNote(newNote)) {
     res.status(400).send('This note is not properly formatted.');
   } else {
-    createNewNote(newNote, db);
+    newNote = createNewNote(newNote);
     res.json(newNote);
   }
 });
 
-router.delete('/notes', (req, res) => {
-
+router.delete('/notes/:id', (req, res) => {
+  const {id} = req.params;
+  const deletedNote = deleteNote(Number(id));
+  if (deletedNote) {
+    res.json(deletedNote);
+  } else {
+    res.status(404).send("This note doesn't exist");
+  }
 });
 
 module.exports = router;
